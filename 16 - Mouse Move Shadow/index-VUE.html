@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mouse Shadow</title>
+    <style>
+        html {
+            color: black;
+            font-family: sans-serif;
+        }
+
+        body {
+            margin: 0;
+        }
+
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: black;
+        }
+
+        h1 {
+            text-shadow: 10px 10px 0 rgba(0, 0, 0, 1);
+            font-size: 100px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="app">
+        <div class="hero" @mousemove="mousemoveHandler">
+            <h1 contenteditable :style="{ textShadow }">🔥WOAH!</h1>
+        </div>
+    </div>
+
+    <script src='https://unpkg.com/vue@next'></script>
+    <script>
+        const { ref, reactive } = Vue;
+        const App = {
+            setup() {
+                const length = 150;
+                const textShadow = ref('');
+                const mousemoveHandler = () => {
+                    const { clientX, clientY } = event;
+                    
+                    // 先算出滑鼠位置與畫面寬高的百分比乘上一個數字，再乘上2減該數字，取得含負數的範圍
+                    const lengthX = Math.floor(clientX / event.currentTarget.offsetWidth * length) * 2 - length;
+                    const lengthY = Math.floor(clientY / event.currentTarget.offsetHeight * length) * 2 - length;
+                    
+                    // lengthX/lengthY 乘上一個負數表示與滑鼠反方向
+                    textShadow.value = `
+                        ${lengthX * -0.6}px ${lengthY * -0.6}px 5px rgba(255, 0, 0, .8),
+                        ${lengthX * -0.8}px ${lengthY * -0.8}px 5px rgba(0, 255, 0, .8),
+                        ${lengthX * -1}px ${lengthY * -1}px 5px rgba(0, 0, 255, .8)
+                    `;
+                }
+                return {
+                    textShadow,
+                    mousemoveHandler
+                }
+            }
+        }
+        Vue.createApp(App).mount("#app");
+    </script>
+</body>
+
+</html>

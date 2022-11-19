@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <form class="search-form">
+            <input type="text" class="search" placeholder="City or State" v-model="searchText">
+            <ul class="suggestions">
+                <template v-if="searchText">
+                    <li v-for="item in filterCities" :key="item.rank">
+                        <span class="name" v-html="displayName(item)"></span>
+                        <span class="population">{{item.population}}</span>
+                    </li>
+                </template>
+                <template v-else>
+                    <li>Filter for a city</li>
+                    <li>or a state</li>
+                </template>
+            </ul>
+        </form>
+    </div>
+
+    <script src='https://unpkg.com/vue@next'></script>
+    <script src='https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.0/axios.min.js'></script>
+    <script>
+        const { ref, reactive, onMounted, computed } = Vue;
+        const App = {
+            setup() {
+                const cities = ref([]);
+                const searchText = ref('');
+                const filterCities = computed(() => {
+                    return cities.value.filter(value => {
+                        const reg = new RegExp(searchText.value, 'gi');
+                        return value.city.match(reg, 'gi') || value.state.match(reg, 'gi');
+                    })
+                });
+                const displayName = item => {
+                    const reg = new RegExp(searchText.value, 'gi');
+                    let cityName = item.city.replace(reg, `<span class="hl">${searchText.value}</span>`);
+                    let stateName = item.state.replace(reg, `<span class="hl">${searchText.value}</span>`);
+                    return `${cityName}, ${stateName}`;
+                };
+                onMounted(async () => {
+                    try {
+                        const { data } = await axios({
+                            method: 'get',
+                            url: 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json'
+                        });
+                        cities.value = data;
+                    } catch (error) {
+                        console.error(error.message);
+                    }
+                });
+                return {
+                    cities,
+                    searchText,
+                    filterCities,
+                    displayName
+                }
+            }
+        }
+        Vue.createApp(App).mount("#app");
+    </script>
+</body>
+
+</html>

@@ -1,7 +1,7 @@
 html {
   box-sizing: border-box;
   font-size: 10px;
-  background: #ffc600;
+  /* background: #ffc600; */
 }
 
 *, *:before, *:after {
@@ -64,6 +64,6 @@ h1 {
   transition:all 0.4s;
 }
 
-.hole.up .mole {
+.hole .mole.up {
   top: 0;
 }

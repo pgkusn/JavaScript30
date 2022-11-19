@@ -1,12 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Key Detection</title>
-  <script type="text/javascript" src="https://www.cornify.com/js/cornify.js"></script>
+    <meta charset="UTF-8">
+    <title>Key Detection</title>
+    <script type="text/javascript" src="http://www.cornify.com/js/cornify.js"></script>
 </head>
+
 <body>
-<script>
-</script>
+    <script>
+        let secretCode = ['k', 'e', 'n', 'g', 'e'];
+        let inputCode = [];
+        window.addEventListener('keyup', e => {
+            inputCode.push(e.key);
+            inputCode.splice(0, inputCode.length - secretCode.length); // 限制inputCode最大長度為5
+            console.log(inputCode, secretCode);
+            if (inputCode.join() === secretCode.join()) {
+                cornify_add();
+            }
+        });
+    </script>
 </body>
+
 </html>

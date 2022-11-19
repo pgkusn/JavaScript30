@@ -1,19 +1,41 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
   <meta charset="UTF-8">
   <title>HTML5 Canvas</title>
 </head>
-<body>
-<canvas id="draw" width="800" height="800"></canvas>
-<script>
-</script>
 
-<style>
-  html, body {
-    margin: 0;
-  }
-</style>
+<body>
+  <div class="container">
+    <label>
+      <input type="checkbox" id="eraser">Eraser
+    </label>
+    <canvas id="draw" width="800" height="500"></canvas>
+  </div>
+  
+  <script src="script.js"></script>
+
+  <style>
+    html,
+    body {
+      margin: 0;
+      height: 100%;
+    }
+
+    .container {
+      display: flex;
+      height: 100%;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+    }
+
+    canvas {
+      border: 1px solid #333;
+    }
+  </style>
 
 </body>
+
 </html>

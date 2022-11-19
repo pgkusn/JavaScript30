@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Speed Scrubber</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="wrapper">
+            <video class="flex" width="765" height="430" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" loop controls ref="video"></video>
+            <div class="speed" @mousemove="mousemoveHandler">
+                <div class="speed-bar" :style="{ height: barHeight }">{{speed.toFixed(2)}}×</div>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://unpkg.com/vue@next'></script>
+    <script>
+        const { ref, reactive, computed, watch } = Vue;
+        const App = {
+            setup() {
+                const min = 0.5;
+                const max = 4;
+                const ratio = ref(0);
+                const video = ref(null);
+                const barHeight = computed(() => {
+                    return `${Math.floor(ratio.value * 100)}%`;
+                })
+                const speed = computed(() => {
+                    return ratio.value * (max - min) + min;
+                })
+                watch(speed, value => {
+                    video.value.playbackRate = value;
+                })
+                const mousemoveHandler = () => {
+                    ratio.value = event.offsetY / event.currentTarget.offsetHeight;
+                }
+                return {
+                    video,
+                    barHeight,
+                    speed,
+                    mousemoveHandler
+                }
+            }
+        }
+        Vue.createApp(App).mount("#app");
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Whack A Mole!</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <h1>Whack-a-mole! <span class="score">{{ score }}</span></h1>
+        <button @click="startGame">Start!</button>
+
+        <div class="game">
+            <div class="hole" v-for="mole in moles" :key="mole.id">
+                <div :class="['mole', { up: mole.up }]" @click="addScore(mole.id)"></div>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://unpkg.com/vue@next'></script>
+    <script>
+        const { ref, reactive } = Vue;
+        const App = {
+            setup() {
+                const moleTotal = 6;
+                const moles = reactive([]);
+                const gameTime = ref(10);
+                const score = ref(0);
+                let timer;
+                
+                // init moles
+                for (let i = 1; i <= moleTotal; i++) {
+                    moles.push({ id: i, up: false });
+                }
+
+                const setMole = (randomMole, time) => {
+                    // show
+                    moles[randomMole].up = true;
+                    
+                    // hide
+                    setTimeout(() => {
+                        moles[randomMole].up = false;
+                    }, time);
+
+                    setTimeout(getRandomMole, time / 2);
+                }
+
+                const getRandomMole = () => {
+                    if (!gameTime.value) return;
+                    let randomMole = Math.floor(Math.random() * moleTotal);
+                    if (moles[randomMole].up) return getRandomMole();
+                    const stayTime = Math.random() * (1500 - 1000) + 1000; // 1000~1500
+                    setMole(randomMole, stayTime);
+                }
+
+                const startGame = () => {
+                    if (timer) return;
+                    getRandomMole();
+                    timer = setInterval(() => {
+                        gameTime.value--;
+                        if (gameTime.value === 0) {
+                            clearInterval(timer);
+                            timer = null;
+                            alert('Time\'s Up!');
+                        }
+                    }, 1000);
+                }
+
+                const addScore = id => {
+                    moles[id - 1].up = false;
+                    score.value++;
+                }
+
+                return {
+                    moles,
+                    getRandomMole,
+                    startGame,
+                    addScore,
+                    score
+                }
+            }
+        }
+        Vue.createApp(App).mount("#app");
+    </script>
+</body>
+
+</html>

@@ -1,22 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Type Ahead 👀</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Type Ahead 👀</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
+    <form class="search-form">
+        <input type="text" id="search" class="search" placeholder="City or State">
+        <ul id="suggestions" class="suggestions">
+            <li>Filter for a city</li>
+            <li>or a state</li>
+        </ul>
+    </form>
 
-  <form class="search-form">
-    <input type="text" class="search" placeholder="City or State">
-    <ul class="suggestions">
-      <li>Filter for a city</li>
-      <li>or a state</li>
-    </ul>
-  </form>
-<script>
-const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+        const endpoint = 'https://gist.githubusercontent.com/Miserlou/c5cd8364bf9b2420bb29/raw/2bf258763cdddd704f8ffd3ea9a3e81d25e2c6f6/cities.json';
+        let cities = [];
+        axios.get(endpoint).then(res => {
+            cities = res.data;
+        });
 
-</script>
+        function findMatches(search, cities) {
+            return cities.filter(val => {
+                let regex = new RegExp(search, 'gi');
+                return val.city.match(regex) || val.state.match(regex);
+            });
+        }
+
+        function numberWithCommas(val) {
+            let num = parseInt(val, 10);
+            return num.toLocaleString();
+        }
+        
+        function displayMatches() {
+            let matchArr = findMatches(this.value, cities);
+            let result = matchArr.map(val => {
+                let regex = new RegExp(this.value, 'gi');
+                let city = val.city.replace(regex, `<span class="hl">${this.value}</span>`);
+                let state = val.state.replace(regex, `<span class="hl">${this.value}</span>`);
+                return `
+                    <li>
+                        <span class="name">${city}, ${state}</span>
+                        <span class="population">${numberWithCommas(val.population)}</span>
+                    </li>
+                `;
+            }).join('');
+            document.querySelector('#suggestions').innerHTML = result;
+        }
+        
+        document.querySelector('#search').addEventListener('keyup', displayMatches);
+    </script>
 </body>
+
 </html>

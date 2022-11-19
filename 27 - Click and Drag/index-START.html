@@ -1,41 +1,107 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Click and Drag</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Click and Drag</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .ball {
+            position: absolute;
+            top: 100px;
+            left: 100px;
+            width: 100px;
+            height: 100px;
+            background-color: #f00;
+            border-radius: 50%;
+        }
+    </style>
 </head>
+
 <body>
-  <div class="items">
-    <div class="item item1">01</div>
-    <div class="item item2">02</div>
-    <div class="item item3">03</div>
-    <div class="item item4">04</div>
-    <div class="item item5">05</div>
-    <div class="item item6">06</div>
-    <div class="item item7">07</div>
-    <div class="item item8">08</div>
-    <div class="item item9">09</div>
-    <div class="item item10">10</div>
-    <div class="item item11">11</div>
-    <div class="item item12">12</div>
-    <div class="item item13">13</div>
-    <div class="item item14">14</div>
-    <div class="item item15">15</div>
-    <div class="item item16">16</div>
-    <div class="item item17">17</div>
-    <div class="item item18">18</div>
-    <div class="item item19">19</div>
-    <div class="item item20">20</div>
-    <div class="item item21">21</div>
-    <div class="item item22">22</div>
-    <div class="item item23">23</div>
-    <div class="item item24">24</div>
-    <div class="item item25">25</div>
-  </div>
+    <div class="items">
+        <div class="item item1">01</div>
+        <div class="item item2">02</div>
+        <div class="item item3">03</div>
+        <div class="item item4">04</div>
+        <div class="item item5">05</div>
+        <div class="item item6">06</div>
+        <div class="item item7">07</div>
+        <div class="item item8">08</div>
+        <div class="item item9">09</div>
+        <div class="item item10">10</div>
+        <div class="item item11">11</div>
+        <div class="item item12">12</div>
+        <div class="item item13">13</div>
+        <div class="item item14">14</div>
+        <div class="item item15">15</div>
+        <div class="item item16">16</div>
+        <div class="item item17">17</div>
+        <div class="item item18">18</div>
+        <div class="item item19">19</div>
+        <div class="item item20">20</div>
+        <div class="item item21">21</div>
+        <div class="item item22">22</div>
+        <div class="item item23">23</div>
+        <div class="item item24">24</div>
+        <div class="item item25">25</div>
+    </div>
 
-<script>
-</script>
+    <div class="ball"></div>
 
-  </body>
+    <script>
+        (function () {
+            const list = document.querySelector('.items');
+            let startX = 0;
+            let startScroll = 0;
+
+            list.addEventListener('mousedown', starDrag);
+            list.addEventListener('mousemove', dragHandler);
+            list.addEventListener('mouseup', stopDrag);
+            list.addEventListener('mouseleave', stopDrag);
+
+            function starDrag() {
+                list.classList.add('active');
+                startX = event.pageX;
+                startScroll = list.scrollLeft;
+            }
+            function dragHandler() {
+                if (list.classList.contains('active')) {
+                    let move = event.pageX - startX;
+                    list.scrollLeft = startScroll - move * 5;
+                }
+            }
+            function stopDrag() {
+                list.classList.remove('active');
+            }
+        })();
+
+        // ball
+        (function () {
+            let ball = document.querySelector('.ball');
+            let ballOffsetX = 0;
+            let ballOffsetY = 0;
+
+            ball.addEventListener('mousedown', starDrag);
+
+            function starDrag() {
+                ballOffsetX = event.offsetX;
+                ballOffsetY = event.offsetY;
+            
+                document.addEventListener('mousemove', dragHandler);
+                document.addEventListener('mouseup', stopDrag);
+            }
+            function dragHandler() {
+                ball.style.left = event.pageX - ballOffsetX + 'px';
+                ball.style.top = event.pageY - ballOffsetY + 'px';
+            }
+            function stopDrag() {
+                document.removeEventListener('mousemove', dragHandler);
+                document.removeEventListener('mouseup', stopDrag);
+            }
+        })();
+    </script>
+
+</body>
+
 </html>

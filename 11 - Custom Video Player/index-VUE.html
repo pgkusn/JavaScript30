@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HTML Video Player</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app">
+        <div class="player">
+            <video class="player__video viewer" src="652333414.mp4" ref="video" @timeupdate="timeupdateHandler" @click="togglePlay"></video>
+
+            <div class="player__controls">
+                <div class="progress" @mousedown="mousedownHandler(updateProgress)" @mouseup="disableMousedown" @mouseleave="disableMousedown" @mousemove="updateProgress">
+                    <div class="progress__filled" :style="{ 'flex-basis': progress }"></div>
+                </div>
+                <button class="player__button toggle" title="Toggle Play" @click="togglePlay">
+                    {{ isPlaying ? '❚ ❚' : '►' }}
+                </button>
+                <input type="range" name="volume" class="player__slider" min="0" max="1" step="0.05" value="1" @mousedown="mousedownHandler(updateRange)" @mouseup="disableMousedown" @mousemove="updateRange">
+                <input type="range" name="playbackRate" class="player__slider" min="0.5" max="2" step="0.1" value="1" @mousedown="mousedownHandler(updateRange)" @mouseup="disableMousedown" @mousemove="updateRange">
+                <button data-skip="-10" class="player__button skip" @click="skip">« 10s</button>
+                <button data-skip="25" class="player__button skip" @click="skip">25s »</button>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://unpkg.com/vue@next'></script>
+    <script>
+        const { ref, reactive, watch, computed } = Vue;
+        const App = {
+            setup() {
+                const video = ref(null);
+                const isPlaying = ref(false);
+                const progress = ref(0);
+                const isMouseDown = ref(false);
+                const togglePlay = () => {
+                    if (isPlaying.value) {
+                        video.value.pause();
+                    }
+                    else {
+                        video.value.play();
+                    }
+                    isPlaying.value = !video.value.paused;
+                }
+                const skip = () => {
+                    const skipTime = parseFloat(event.target.dataset.skip);
+                    video.value.currentTime += skipTime;
+                }
+                const timeupdateHandler = () => {
+                    progress.value = `${video.value.currentTime / video.value.duration * 100}%`;
+                }
+                const mousedownHandler = callback => {
+                    isMouseDown.value = true;
+                    callback();
+                }
+                const disableMousedown = () => {
+                    isMouseDown.value = false;
+                }
+                const updateProgress = () => {
+                    if (isMouseDown.value) {
+                        const percent = event.offsetX / event.currentTarget.offsetWidth;
+                        video.value.currentTime = video.value.duration * percent;
+                    }
+                }
+                const updateRange = () => {
+                    if (isMouseDown.value) {
+                        video.value[event.target.name] = event.target.value;
+                    }
+                }
+                return {
+                    video,
+                    isPlaying,
+                    progress,
+                    isMouseDown,
+                    togglePlay,
+                    skip,
+                    timeupdateHandler,
+                    mousedownHandler,
+                    disableMousedown,
+                    updateProgress,
+                    updateRange
+                }
+            }
+        }
+        Vue.createApp(App).mount("#app");
+    </script>
+</body>
+
+</html>

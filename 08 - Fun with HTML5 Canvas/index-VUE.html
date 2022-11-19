@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML5 Canvas</title>
+    <style>
+      html,
+      body {
+        margin: 0;
+      }
+    </style>
+  </head>
+
+  <body>
+    <div id="app">
+      <canvas
+        ref="canvasEl"
+        @mousemove="draw"
+        @mousedown="mousedownHandler"
+        @mouseup="isDrawing = false"
+        @mouseleave="isDrawing = false"
+      ></canvas>
+    </div>
+
+    <script src="https://unpkg.com/vue@next"></script>
+    <script>
+      const { ref, reactive, onMounted } = Vue
+      const App = {
+        setup() {
+          let ctx, lastX, lastY
+          const canvasEl = ref(null)
+          const isDrawing = ref(false)
+          const initCanvas = () => {
+            ctx = canvasEl.value.getContext('2d')
+            canvasEl.value.width = window.innerWidth
+            canvasEl.value.height = window.innerHeight
+          }
+          const draw = () => {
+            if (!isDrawing.value) return
+            ctx.beginPath()
+            ctx.moveTo(lastX, lastY)
+            ctx.lineTo(event.offsetX, event.offsetY)
+            ctx.stroke()
+            ;[lastX, lastY] = [event.offsetX, event.offsetY]
+          }
+          const mousedownHandler = () => {
+            isDrawing.value = true
+            ;[lastX, lastY] = [event.offsetX, event.offsetY]
+          }
+          onMounted(() => {
+            initCanvas()
+          })
+          return {
+            canvasEl,
+            isDrawing,
+            draw,
+            mousedownHandler,
+          }
+        },
+      }
+      Vue.createApp(App).mount('#app')
+    </script>
+  </body>
+</html>

@@ -68,7 +68,7 @@ body {
   position: absolute;
   bottom: 0;
   width: 100%;
-  transform: translateY(100%) translateY(-5px);
+  /* transform: translateY(100%) translateY(-5px); */
   transition: all .3s;
   flex-wrap: wrap;
   background: rgba(0,0,0,0.1);
@@ -98,10 +98,8 @@ body {
 }
 
 .progress__filled {
-  width: 50%;
   background: #ffc600;
   flex: 0;
-  flex-basis: 50%;
 }
 
 /* unholy css to style input type="range" */

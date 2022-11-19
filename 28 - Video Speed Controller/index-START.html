@@ -1,20 +1,45 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <meta charset="UTF-8">
-  <title>Video Speed Scrubber</title>
-  <link rel="stylesheet" href="style.css">
+    <meta charset="UTF-8">
+    <title>Video Speed Scrubber</title>
+    <link rel="stylesheet" href="style.css">
 </head>
+
 <body>
 
-  <div class="wrapper">
-    <video class="flex" width="765" height="430" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" loop controls></video>
-    <div class="speed">
-      <div class="speed-bar">1×</div>
+    <div class="wrapper">
+        <video class="flex" width="765" height="430" src="http://clips.vorwaerts-gmbh.de/VfE_html5.mp4" loop controls></video>
+        <div class="speed">
+            <div class="speed-bar">1×</div>
+        </div>
     </div>
-  </div>
 
-<script>
-</script>
+    <script>
+        const speed = document.querySelector('.speed');
+        const speedBar = document.querySelector('.speed-bar');
+        const video = document.querySelector('.flex');
+
+        const min = 0.5;
+        const max = 4;
+
+        speed.addEventListener('mousemove', moveHandler);
+
+        function moveHandler() {
+            // console.log(event.offsetY, event.pageY - this.offsetTop);
+            let scale = (event.pageY - this.offsetTop) / this.offsetHeight;
+            
+            // set bar height
+            let height = Math.round(scale * 100) + '%';
+            speedBar.style.height = height;
+            
+            // set speed
+            let playbackRate = scale * (max - min) + min;
+            speedBar.textContent = playbackRate.toFixed(2) + 'x';
+            video.playbackRate = playbackRate;
+        }
+    </script>
 </body>
+
 </html>

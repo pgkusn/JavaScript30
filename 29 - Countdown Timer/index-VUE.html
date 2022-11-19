@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Countdown Timer</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="app" v-cloak>
+        <div class="timer">
+            <div class="timer__controls">
+                <button data-time="20" class="timer__button" @click="startTimer">20 Secs</button>
+                <button data-time="300" class="timer__button" @click="startTimer">Work 5</button>
+                <button data-time="900" class="timer__button" @click="startTimer">Quick 15</button>
+                <button data-time="1200" class="timer__button" @click="startTimer">Snack 20</button>
+                <button data-time="3600" class="timer__button" @click="startTimer">Lunch Break</button>
+                <form name="customForm" id="custom" @submit.prevent="startTimer">
+                    <input type="text" name="minutes" placeholder="Enter Minutes" ref="customInput">
+                </form>
+            </div>
+            <div class="display" v-if="isStart">
+                <h1 class="display__time-left">{{ formatTime(leftTime.min) }}:{{ formatTime(leftTime.sec) }}</h1>
+                <p class="display__end-time">Be Back At {{ formatTime(endTime.hour) }}:{{ formatTime(endTime.min) }}</p>
+            </div>
+        </div>
+    </div>
+
+    <script src='https://unpkg.com/vue@next'></script>
+    <script>
+        const { ref, reactive } = Vue;
+        const App = {
+            setup() {
+                let timer = null;
+                let isStart = ref(false);
+                let customInput = ref(null);
+                const leftTime = reactive({ min: 0, sec: 0 });
+                const endTime = reactive({ hour: 0, min: 0 });
+                const startTimer = () => {
+                    isStart.value = true;
+                    clearInterval(timer);
+
+                    let time = parseInt(event.target.dataset.time || event.target.firstChild.value * 60, 10);
+                    const timeStamp = new Date().getTime() + time * 1000;
+                    setEndTime(timeStamp);
+                    setLeftTime(time);
+                    
+                    timer = setInterval(() => {
+                        time--;
+                        setLeftTime(time);
+                        if (time === 0) {
+                            clearInterval(timer);
+                        }
+                    }, 1000);
+
+                    customInput.value.value = '';
+                }
+                const setEndTime = timeStamp => {
+                    endTime.hour = new Date(timeStamp).getHours();
+                    endTime.min = new Date(timeStamp).getMinutes();
+                }
+                const setLeftTime = time => {
+                    leftTime.min = Math.floor(time / 60);
+                    leftTime.sec = time % 60;
+                }
+                const formatTime = time => {
+                    return time < 10 ? '0' + time : time;
+                }
+                return {
+                    isStart,
+                    customInput,
+                    leftTime,
+                    endTime,
+                    startTimer,
+                    formatTime
+                }
+            }
+        }
+        Vue.createApp(App).mount("#app");
+    </script>
+</body>
+
+</html>
