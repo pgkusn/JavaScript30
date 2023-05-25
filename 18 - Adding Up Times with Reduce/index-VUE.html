@@ -203,7 +203,7 @@
 
                     const hr = Math.floor(totalSec / 3600);
                     const min = Math.floor(totalSec % 3600 / 60);
-                    const sec = Math.floor(totalSec % 60);
+                    const sec = totalSec % 60;
                     console.log(`${hr}:${min}:${sec}`); // 總時間
                 })
                 return {
